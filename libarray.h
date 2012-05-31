@@ -1,7 +1,9 @@
 #ifndef LIBARRAY_H_
 #define LIBARRAY_H_
 
+#ifndef uint
 #define uint unsigned int
+#endif
 
 typedef struct Array
 {
