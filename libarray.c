@@ -9,22 +9,6 @@
 #define ARRAY_INITIAL_SIZE  4
 #define ARRAY_GROWTH        1.5f
 
-//NOTE: PUT IN ASSERTS!
-
-
-static void reconstruct_ptrs(Array* array)
-{
-    realloc(array->ptrs, array->count);
-//
-//    char* counter = (char*)array->data;
-//    for (int i = 0; i < array->count; i++)
-//    {
-//        array->ptrs[i] = (char*)counter;
-//        for (size_t cp = 0; cp < array->struct_size; cp++)
-//            counter++;
-//    }
-
-}
 
 
 static void assure_space(Array *array)
@@ -34,7 +18,7 @@ static void assure_space(Array *array)
 		array->allocated = (uint)(array->allocated * ARRAY_GROWTH);
         array->data = (char*)realloc(array->data, array->allocated * array->struct_size);
 
-        reconstruct_ptrs(array);
+        realloc(array->ptrs, array->count);
 	}
 }
 
@@ -73,7 +57,6 @@ void array_free(Array *array)
 
 int array_in_range(Array *array, uint index)
 {
-    //NOTE: PUT AN ASSERT HERE
 	return (int)index <= array->count;
 }
 
@@ -134,7 +117,7 @@ void array_erase(Array *array, uint index)
 }
 
 
-
+//Pass an Array of "uint"s as indecies into array to erase
 void array_erase_list(Array *array, Array *index_array)
 {
     int n;
