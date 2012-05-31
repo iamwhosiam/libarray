@@ -9,7 +9,6 @@ typedef struct Array
 	int     count;
 	size_t  struct_size;
 	size_t  allocated;
-	char*   ptrs;
 } Array;
 
 
