@@ -1,8 +1,7 @@
 
-#include "tw_array.h"
+#include <tw_array.h>
 
-#include "stdlib.h"
-#include "stdio.h"
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
@@ -10,6 +9,7 @@
 #define ARRAY_INITIAL_SIZE  4
 #define ARRAY_GROWTH        1.5f
 
+//NOTE: PUT IN ASSERTS!
 
 
 static void reconstruct_ptrs(Array* array)
@@ -31,7 +31,7 @@ static void assure_space(Array *array)
 {
 	if (array->count + 1 > (int)array->allocated)
 	{
-		array->allocated = (size_t)(array->allocated * ARRAY_GROWTH);
+		array->allocated = (uint)(array->allocated * ARRAY_GROWTH);
         array->data = (char*)realloc(array->data, array->allocated * array->struct_size);
 
         reconstruct_ptrs(array);
@@ -40,7 +40,7 @@ static void assure_space(Array *array)
 
 
 
-Array *array_init(size_t struct_size)
+Array *array_init(uint struct_size)
 {
 	//start by creating the array struct
 	Array *array = malloc(sizeof(Array));
@@ -71,23 +71,18 @@ void array_free(Array *array)
 }
 
 
-int array_in_range(Array *array, size_t index)
+int array_in_range(Array *array, uint index)
 {
     //NOTE: PUT AN ASSERT HERE
 	return (int)index <= array->count;
 }
 
 
-void *array_at(Array *array, size_t index)
+void *array_at(Array *array, uint index)
 {
-	if (array_in_range(array, index))
-	{
-		size_t count = (index * array->struct_size);
-		return (array->data + count);
-	}
-
-	printf("(Array_At) out of bounds!\n");
-	return 0;
+    assert(array_in_range(array, index));
+    uint count = (index * array->struct_size);
+    return (array->data + count);
 }
 
 
@@ -98,19 +93,15 @@ void *array_end(Array *array)
 }
 
 
-void array_insert(Array *array, const void *data, size_t index)
+void array_insert(Array *array, const void *data, uint index)
 {
-	if ((int)index > array->count)
-	{
-		printf("(Array_Insert) out of range!\n");
-		return;
-	}
+    assert(array_in_range(array, index));
 
 	assure_space(array);
 
 	void *dest = array->data + ((index + 1) * array->struct_size);
 	void *source = array_at(array, index);
-	size_t size = (array->count - index) * array->struct_size;
+	uint size = (array->count - index) * array->struct_size;
 
 	//move everything after index right one element
 	memmove(dest, source, size);
@@ -124,28 +115,22 @@ void array_insert(Array *array, const void *data, size_t index)
 
 
 
-void array_erase(Array *array, size_t index)
+void array_erase(Array *array, uint index)
 {
-	if (!array_in_range(array, index))
-	{
-		printf("(Vector_Erase) out of bounds!\n");
-		return;
-	}
-	else
-	{
-	    //"destination" is the cell were erasing
-		void *dest = array_at(array, index);
-		//"source" is the cell after were erasing
-		void *source = array->data + ((index + 1) * array->struct_size);
-		//"size" is the size of the array after the cell were erasing
-		size_t size = (array->count - index) * array->struct_size;
+    assert(array_in_range(array, index));
+    
+    //"destination" is the cell were erasing
+    void *dest = array_at(array, index);
+    //"source" is the cell after were erasing
+    void *source = array->data + ((index + 1) * array->struct_size);
+    //"size" is the size of the array after the cell were erasing
+    uint size = (array->count - index) * array->struct_size;
 
-        //shift everything after the cell were erasing into said cell
-		memmove(dest, source, size);
+    //shift everything after the cell were erasing into said cell
+    memmove(dest, source, size);
 
-        //were now tracking one less cell
-		array->count--;
-	}
+    //were now tracking one less cell
+    array->count--;
 }
 
 
@@ -153,12 +138,12 @@ void array_erase(Array *array, size_t index)
 void array_erase_list(Array *array, Array *index_array)
 {
     int n;
-	size_t i;
+	uint i;
 	for (i = array->count; i > 0; i--)
 	{
 		for (n = 0; n < index_array->count; n++)
 		{
-			if (i == *(size_t*)array_at(index_array, (size_t)n))
+			if (i == *(uint*)array_at(index_array, (uint)n))
 				array_erase(array, i);
 		}
 	}
@@ -210,8 +195,7 @@ void array_clear(Array *array)
 
 
 //array_reserve grows the reserved memory
-//NOTE: UNTESTED
-void array_reserve(Array *array, size_t size)
+void array_reserve(Array *array, uint size)
 {
 	array->allocated = size;
     array->data = (char*)realloc(array->data, array->allocated * array->struct_size);
@@ -219,8 +203,7 @@ void array_reserve(Array *array, size_t size)
 
 
 //array_resize grows the actual count of items in the list
-//NOTE: UNTESTED
-void array_resize(Array *array, size_t size)
+void array_resize(Array *array, uint size)
 {
 	array->count = size;
     if (array->count > (int)array->allocated)
@@ -229,17 +212,3 @@ void array_resize(Array *array, size_t size)
         array->data = (char*)realloc(array->data, array->allocated * array->struct_size);
     }
 }
-
-
-////- put an assert in the is_in_bounds function.
-////- add search index to array struct
-//
-//void* array_search(Array* array, void* search_datem)
-//{
-//    array->search_index = 0;
-//    //store sentinel
-//}
-//
-////void* array_next(Array* array)
-////{
-////}
