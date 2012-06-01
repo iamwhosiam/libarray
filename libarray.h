@@ -11,7 +11,6 @@ typedef struct Array
 	int     count;
 	uint    struct_size;
 	uint    allocated;
-	char*   ptrs;
 } Array;
 
 

@@ -17,8 +17,6 @@ static void assure_space(Array *array)
 	{
 		array->allocated = (uint)(array->allocated * ARRAY_GROWTH);
         array->data = (char*)realloc(array->data, array->allocated * array->struct_size);
-
-        realloc(array->ptrs, array->count);
 	}
 }
 
