@@ -1,5 +1,5 @@
-#ifndef LIBARRAY_H_
-#define LIBARRAY_H_
+#ifndef ARRAY_H_
+#define ARRAY_H_
 
 #ifndef uint
 #define uint unsigned int
@@ -7,6 +7,7 @@
 
 typedef struct Array
 {
+	void*   ptr;
 	char*   data;
 	int     count;
 	uint    struct_size;
