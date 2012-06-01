@@ -158,7 +158,7 @@ void array_pop(Array *array)
 {
 	if (array->count > 0)
 	{
-		memset(array_end(array), 0, array->struct_size);
+		// memset(array_end(array), 0, array->struct_size);
 		array->count--;
 	}
 }
